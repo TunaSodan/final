@@ -1,0 +1,247 @@
+---
+title: "Mutluluk Düzeyini Etkileyen Faktörler, İller Bazında Türkiye Örneği"
+author: 
+  - Ahmet Tunahan SODAN[^1]
+bibliography: ../bibliography/biblio.bib
+csl: ../csl/apa-tr.csl
+header-includes:
+  - \usepackage{polyglossia}
+  - \setmainlanguage{turkish}
+  - \usepackage{booktabs}
+  - \usepackage{caption} 
+  - \captionsetup[table]{skip=10pt}
+output:
+  bookdown::pdf_document2:
+    fig_caption: yes
+    fig_height: 3
+    fig_width: 4
+    keep_tex: no
+    latex_engine: xelatex
+    number_sections: yes
+    toc: no
+geometry: margin=1in
+link-citations: yes
+urlcolor: blue
+fontsize: 12pt
+biblio-style: apalike
+abstract: |
+  Herkesin memnuniyet ve tatmin ölçütleri birbirinden farklıdır. Eğer bu kavramlarla alakalı bir ölçümleme yapılmak istenirse bu farklılıklar yapısal bir sorun ortaya çıkaracaktır. Mutluluğun tanımıyla ilgili tek tip bir tanım olmamakla birlikte genel-geçer bir kabul ile toplanan veri setinin analizi yapılacaktır. TÜİK resmi bir kurum olması nedeniyle bu tarz bilgilere tarafsız bir biçimde erişme kabiliyetine sahiptir ve çalışmaya konu edilmesinin de sebebidir. Doğrusal regresyon analizi ve Korelasyon analizi doğrusal ilişkişeri anlamaya yardımcı olacaktır. 
+---
+
+
+
+
+
+
+
+[^1]: 18080460, [Github Repo](https://github.com/TunaSodan/final)
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE, echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+# Giriş
+
+Sosyal yaşam; modern insanın genel memnuniyet kriterlerinden birisidir. Sağlıklı bir sosyal yaşantı; bireylerin üzerlerinde hissettikleri yükün göreceli olarak azalmasına neden olur ki günümüz dünyasındaki karmaşık ilişkileri göz önünde bulundurursak hayati bir öneme sahip olduğu düşünülebilir. Sosyal yaşantının oluşumu ise sosyalleşme ile olur. Sosyalleşme, "toplumdaki mevcut ya da beklenen rolleri yerine getirmek için gerekli olan bilgi, beceri, değerler, eğilimler ve öz algıların benimsenmesi ya da gelişimi" olarak (@dinccer2014universite) tanımlanamaktadır. Bundan dolayıdır ki sosyal yaşantı bireyin 'tek' başına gerçekleştirdiği bir olgu değildir. Yaşadıkları şehrin ve vatandaşı olduları ülkenin hatta gelişen haberleşme araçları vasıtasıyla tüm dünyadaki bireylerin eylemleri bireyin sosyal yaşantısına etki etmektedir. Sosyal hayattan memnuniyet, insanların kendilerini mutlu ve tatmin hissetmelerini sağlar. İyi bir sosyal hayat, insanların hayatlarının kalitesini artırabilir ve yaşamdan daha fazla keyif almalarını sağlayabilir. İnsanlarla bütünleşmenin yegane unsurlarından birisi de elde ettikleri gelirdir (@karatacsouglu2016gelir). Şüphesiz kazanılmış becerilerin, kamudan veya özel sektörden alınacak hizmetlerin, bir işte çalışmanın sebeplerinden en önemlisinin, yapılacak aktivitelerin belirleyici unsuru bütçe kısıtıdır ve bu kısıtı oluşturan unsur 'gelir'dir. Türkiye'de *mutluluk düzeyi* ile ilgili bir araştırma yapacağımız bu çalışmada irdeleyeceğimiz konular da yüksek oranda gelire bağlıdır. Örneğin bozulan sağlığı için devlet hizmeti alan bir bireyin gelirini harcayacak başka alanlara aktarması olumlu bir sonuç doğurmalıdır. Ancak bu hipotezin doğru çıkması için gelirini harcayabilecek başka alanlar var mıdır ve yeterli midir sorularını da sormamız gerekir. İnceleyeceğimiz veriler de bu yönde toplanmış ve Türkiye İstatistik Kurumu (*TÜİK*)'nun 2015 yılında topladığı'**İllere Göre Yaşam Endeksi** verileri kullanılmıştır. [*buradan verilere ulaşılabilirsiniz*](https://data.tuik.gov.tr/Search/Search?text=ya%C5%9Fam%20endeksi&dil=1) Çalışmamızda kullanılacak veriler yatay kesit verileridir ve bu verilerle **Korelasyon analizi** ve **Doğrusal Regresyon** gerçekleştirilecektir. İncelenecek değişkenler olarak *mutluluk düzeyi*, *istihdam oranı*, *ortalama günlük kazanç*, *işinden memnuniyet oranı*, *sağlığından memnuniyet oranı*, *işsizlik oranı*, *işinden memnuniyet oranı*,  *sosyal hayatından memnuniyet oranı*, *temel ihtiyaçlarından memnunniyet*, *fakülte ve yüksekokul mezunlarının oranı* alınacaktır.
+
+## Çalışmanın Amacı
+
+Bu çalışmanın amacı giriş kısmında belirtilen olguların birbirleri üzerindeki etkilerinin araştırılması ve bu etkilerin güçlülük karşılaştırmasının yapılmasıdır. Görece basit bir analiz olduğu için gündelik yaşamlarında bu konularla alakalı karmaşık analizleri anlayamayacak olan insanlar için rehber özelliği taşıması amaçlanmıştır. Bu nedenle kullanılann dilin sadeliği gözetilmeye çalışılmıştır ve yapılacak analizlerin ayrıntılı açıklamaları yapılacaktır. Ayrıca her il için elimizdeki yeterli verilerle yapacağımız analizlerle bir rapor yazılması hedeflenmiştir.
+
+## Literatür
+
+Literatürde sosyal yaşantı memnuniyetini etkileyen etmenler ile ilgili çok sayıda araştırma mevcuttur. Gelir eşitsizliğinin suç işleme eğilimi üzerine etkisine (biz çalışmamızda suç olarak cinayet oranlarını alacağız) bakıldığı zaman @zungu2023twin'in yapmış olduğu istatiksel çalışma aynı yönde bir etkinin olduğunu ortaya koymuştur. Aynı makalede yine *işsizlik oranının da* suç işleme eğilimiyle pozitif bir etkisi olduğu görülmüştür. Doğa ile olan ilişkiler de kişisel mutluluğa dolayısıyla da sosyal hayattan memnuniyete pozitif etkisi vardır. Milli parklar, mesire alanları, yürüyüş yolları sosyal aktivitelere imkan sağlayan yerlerdir. Dünyada "**Mutluluk Bakanlığı**" na sahip tek ülke olan Bhutan'da dağlarda ve ormanlarda yaşayan insanların doğaya uyumunun arttığı ve bu yönde bir sosyalleşme becerisi geliştirdikleri görülmüştür. (@sears2017forest). Mutlu insandan kastedilen ise psikologların yaptıkları tanım ile "duygusal olarak istikrarlı, yüksek sosyal oryantasyonu olan; sağlıklı, tatminkâr, sıcak bir sevgiye ve sosyal ilişkiye sahip, aktif bir yaşam tarzı ve anlamlı bir işi olan kişiler" kastedilmektedir.(@kangal2013mutluluk)
+
+# Veri
+
+Yapılacak analizler de kullanılan veriler Türkiye İstatisk Kurumu'ndan (TÜİK) alınmıştır. 2015 yılına ait bulguları içermektedir Analizlerde kullanılacak verilerin olduğu kısımların isimleri kısaltılmalarıyla kullanılacaktır.
+
+Aşağıdaki Özet İstatistik tablosu; verilerimizin başlıca istatistikleri veri setiyle ilgili genel bir bilgi sağlamak amacıyla oluşturulmuştur.
+
+Başlıkları kısaltılan sütunlar ve çalışmada hangi isimle kullanılacakları şu şekilde ayarlanmıştır;
+
+-   **İşinden memnuniyet** ; İşinden Memnuniyet oranını(%),
+-   **İşsizlik** ; İşsizlik Oranını(%),\
+-   **İstihdam** ; İstihdam Oranını(%),
+-   **Ortalama Günlük Kazanç** ; Ortalama Günlük Kazancı(TL),
+-   **İşinden Memnuniyet** ; İşinden Memnuniyet Oranını(%),
+-   **Yoksulluk** ; Temel İhtiyaçlarını Karşılayamadığını Beyan Eden Hanelerin Oranını(%),
+-   **Sağlığından Memnuniyet** ; Sağlığından Memnun Olanların oranını(%),
+-   **Üniversite Mezuniyet Oranı** ; Fakülte veya Yüksekokul Mezuniyet Oranını(%),
+-   **Mutluluk** ; Mutluluk Düzeyini,
+-   **Sosyal Hayatından Memnuniyet** ; Sosyal Hayatından Memnun Olanların Oranını(%) göstermektedir.
+
+```{r,echo=FALSE}
+library(readxl)
+veri <- read_excel("C:/Users/HP/Desktop/Final/Final/data/veri.xls")
+veri[, 2:43] <- lapply(veri[, 2:43], as.numeric)
+veri <- subset(veri, select = -42)
+
+veri <- veri |> janitor::clean_names()
+
+names(veri)[1] <- "il"
+names(veri)[5] <- "istihdam"
+names(veri)[6] <- "issizlik"
+names(veri)[7] <- "ortalama_gunluk_kazanc"
+names(veri)[8] <- "isinden_memnuniyet"
+names(veri)[11] <- "yoksulluk"
+names(veri)[15] <- "saglıgından_memnuniyet"
+names(veri)[20] <- "universite_mezuniyet_orani"
+names(veri)[41] <- "sosyal_hayatindan_memnuniyet"
+names(veri)[42] <- "mutluluk"
+```
+
+```{r,echo=FALSE}
+library(xtable) 
+# devtools::install_github("emraher/summarytools")
+library(summarytools)
+st_options(lang = "tr")
+```
+
+```{r results='asis',echo=FALSE}
+library(xtable)
+# devtools::install_github("emraher/summarytools")
+library(summarytools)
+st_options(lang = "tr")
+library(magrittr)
+library(dplyr)
+
+veri %>%
+  select("istihdam", "issizlik", "ortalama_gunluk_kazanc", "isinden_memnuniyet", "yoksulluk", "saglıgından_memnuniyet", "universite_mezuniyet_orani", "sosyal_hayatindan_memnuniyet", "mutluluk") %>%
+  descr(stats = c("mean", "sd", "min", "med", "max"), transpose = TRUE) %>%
+  xtable(caption = "Özet İstatistikler", label = "tab:ozet", align = c("l", "c", "c", "c", "c", "c")) %>%
+  print(booktabs = TRUE, comment = FALSE, caption.placement = "top")
+```
+
+Yoksulluk ve Sosyal Hayatından Memnuniyet verilerinin standart sapmları göreli olarak yüksek çıkmıştır. Bunun sebebi verilerin elde edilme usulünün *beyan* üzerine olması olabilir. İşsizlik oranı iktisadi anlamda kabul edilebilir seviyededir ve diğer verilere genel anlamda olumsuz yansımayacağı kabul edilebilir. Diğer verilerin standart sapmaları kabul edilebilir düzeydedir. Sosyal hayatından memnun olup Mutlu olmayan bir kitlenin mevcudiyeti göze çarpmaktadır. Anomali veya kişilerin halet-i ruhiyesindeki anlık değişmeler olarak kabul edilebilir.
+
+\newpage
+
+# Yöntem ve Veri Analizi
+
+Analizimizde 1 Bağımlı Değişken(*mutluluk*), 8 Bağımsız Değişken bulunacaktır. $varepsilon$ hata terimini ifade etmektedir. Doğrusal Regresyon için kuracağımız denklem şu şekildedir:
+
+$$
+Y = \beta_0 + \beta_1 X_1 + \beta_2 X_2 + \beta_3 X_3 + \beta_4 X_4 \beta_5 X_5 + \beta_6 X_6 + \beta_6 X_6 + \beta_7 X_7 + \beta_8 X_8 + \varepsilon
+$$
+
+-   $Y$ : Bağımlı değişken olan Mutluluk Düzeyini,
+-   $X$'ler bağımsız (*açıklayıcı*) değişkenleri,
+-   $X_1$ : İstihdam Oranı
+-   $X_2$ : İşsizlik oranı
+-   $X_3$ : Ortalama Günlük Kazancı
+-   $X_4$ : İşinden Memnuniyet Oranı
+-   $X_5$ : Yoksulluk Oranı
+-   $X_6$ : Sağlığından Memnuniyet Oranı
+-   $X_7$ : Üniversite Mezuniyet Oranı
+-   $X_8$ : Sosyal Hayatından Memnuniyet Oranını
+
+temsil etmektedir.
+
+Aşağıda Regresyon Analizinin sonuçları yer almaktadır:
+
+```{r, echo=FALSE}
+library(readxl)
+
+veri <- read_excel("C:/Users/HP/Desktop/Final/Final/data/veri.xls")
+
+library(readxl)
+
+veri <- read_excel("C:/Users/HP/Desktop/Final/Final/data/veri.xls")
+
+names(veri)[5] <- "istihdam"
+names(veri)[6] <- "issizlik"
+names(veri)[7] <- "ortalama_gunluk_kazanc"
+names(veri)[8] <- "isinden_memnuniyet"
+names(veri)[11] <- "yoksulluk"
+names(veri)[15] <- "sagligindan_memnuniyet"
+names(veri)[20] <- "universite_mezuniyet_orani"
+names(veri)[41] <- "sosyal_hayatindan_memnuniyet"
+names(veri)[43] <- "mutluluk"
+
+veri$istihdam <- veri$istihdam / 100
+veri$issizlik <- veri$issizlik / 100
+veri$isinden_memnuniyet <- veri$isinden_memnuniyet / 100
+veri$yoksulluk <- veri$yoksulluk / 100
+veri$sagligindan_memnuniyet <- veri$sagligindan_memnuniyet / 100
+veri$universite_mezuniyet_orani <- veri$universite_mezuniyet_orani / 100
+veri$sosyal_hayatindan_memnuniyet <- veri$sosyal_hayatindan_memnuniyet / 100
+veri$mutluluk <- veri$mutluluk / 100
+# Bağımsız değişkenler
+bagimsiz_veriler <- c(5, 6, 7, 8, 11, 15, 20, 41)
+
+# Bağımlı değişken
+bagimli_degisken <- "mutluluk"
+
+bagimsiz_veriler <- veri[, bagimsiz_veriler]
+
+model <- lm(veri[[bagimli_degisken]] ~ ., data = bagimsiz_veriler)
+
+summary(model)
+```
+
+Bağımlı değişken üzerinde istatistiksel olarak anlamlı etkiye sahip olan değişkenler için p-değerleri anlamlı düzeyde küçük olan değişkenlere bakabiliriz. Burada anlamlı düzeyi genellikle p \< 0.05 olarak kabul ederiz.
+
+Yukarıdaki regresyon analizlerine göre, aşağıdaki değişkenler bağımlı değişken üzerinde istatistiksel olarak anlamlı bir etkiye sahip oldukları sonucuna ulaşabiliriz:
+
+-   **İstihdam Oranı** (p-değeri: 0.013321)
+-   **Sağlığından Memnuniyet Oranı** (p-değeri: 0.000759)
+-   **Üniversite Mezuniyet Oranı değişkeni** (p-değeri: 0.005709)
+
+**İstihdam katsayısı** ($-0.427861$): İstihdam değişkeni bağımlı değişken üzerinde negatif bir etkiye sahiptir. Bir birimlik artış, bağımlı değişkende ortalama -0.427861 birimlik bir azalmaya yol açar. Bu katsayının p-değeri anlamlı düzeyde küçüktür (p \< 0.05), bu da istihdam değişkeninin bağımlı değişken üzerinde istatistiksel olarak anlamlı bir etkiye sahip olduğunu gösterir.
+
+**İşsizlik katsayısı** (-0.325696): İşsizlik değişkeni bağımlı değişken üzerinde negatif bir etkiye sahiptir. Bir birimlik artış, bağımlı değişkende ortalama -0.325696 birimlik bir azalmaya yol açar. Ancak, bu katsayının p-değeri anlamlı düzeyde büyüktür (p \> 0.05), bu da istatistiksel olarak anlamlı bir etkiye sahip olmadığını gösterir.
+
+**Ortalama Günlük Kazanç katsayısı** (-0.001229): Ortalama günlük kazanç değişkeni bağımlı değişken üzerinde negatif bir etkiye sahiptir. Bir birimlik artış, bağımlı değişkende ortalama -0.001229 birimlik bir azalmaya yol açar. Ancak, bu katsayının p-değeri anlamlı düzeyde büyüktür (p \> 0.05), bu da istatistiksel olarak anlamlı bir etkiye sahip olmadığını gösterir.
+
+**İşinden memnuniyet katsayısı** (-0.143644): İşinden memnuniyet değişkeni bağımlı değişken üzerinde negatif bir etkiye sahiptir. Bir birimlik artış, bağımlı değişkende ortalama -0.143644 birimlik bir azalmaya yol açar. Ancak, bu katsayının p-değeri anlamlı düzeyde büyüktür (p \> 0.05), bu da istatistiksel olarak anlamlı bir etkiye sahip olmadığını gösterir.
+
+**Yoksulluk katsayısı** (-0.224148): Yoksulluk değişkeni bağımlı değişken üzerinde negatif bir etkiye sahiptir. Bir birimlik artış, bağımlı değişkende ortalama -0.224148 birimlik bir azalmaya yol açar. Ancak, bu katsayının p-değeri anlamlı düzeyde büyüktür (p \> 0.05), bu da istatistiksel olarak anlamlı bir etkiye sahip olmadığını gösterir.
+
+**Sağlığından memnuniyet katsayısı** (0.779047): Sağlığından memnuniyet değişkeni bağımlı değişken üzerinde pozitif bir etkiye sahiptir. Bir birimlik artış, bağımlı değişkende ortalama 0.779047 birimlik bir artışa yol açar. Bu katsayının p-değeri anlamlı düzeyde küçüktür (p \< 0.05), bu da sağlığından memnuniyet değişkeninin bağımlı değişken üzerinde istatistiksel olarak anlamlı bir etkiye sahip olduğunu gösterir.
+
+**Üniversite Mezuniyet Oranı katsayısı** (-0.938845): Üniversite mezuniyet oranı değişkeni bağımlı değişken üzerinde negatif bir etkiye sahiptir. Bir birimlik artış, bağımlı değişkende ortalama -0.938845 birimlik bir azalmaya yol açar. Bu katsayının p-değeri anlamlı düzeyde küçüktür (p \< 0.05), bu da üniversite mezuniyet oranı değişkeninin bağımlı değişken üzerinde istatistiksel olarak anlamlı bir etkiye sahip olduğunu gösterir.
+
+**Sosyal Hayatından Memnuniyet katsayısı** (0.107259): Sosyal hayatından memnuniyet değişkeni bağımlı değişken üzerinde pozitif bir etkiye sahiptir. Bir birimlik artış, bağımlı değişkende ortalama 0.107259 birimlik bir artışa yol açar. Ancak, bu katsayının p-değeri anlamlı düzeyde büyüktür (p \> 0.05), bu da istatistiksel olarak anlamlı bir etkiye sahip olmadığını gösterir.
+
+Bu sonuçlar ışığında *İstihdam Oranı*, *Sağlığından Memnuniyet Oranı* ve *Üniversite Mezuniyet Oranı*'nın **Mutluluk** düzeyine istatistiki ve beklenilen bir etkisi olduğunu kabul edebiliriz.
+
+
+```{r fig.cap="İstihdam ve Mutluluk" ,echo=FALSE}
+library(ggplot2)
+
+ggplot(veri, aes(x = mutluluk, y = istihdam)) +
+  geom_point(color = "steelblue", size = 1) +
+  labs(x = "Mutluluk", y = "İstihdam") +
+  theme_minimal()
+```
+
+ Yukarıdaki şekilde görüldüğü üzere regresyon analizini destekler biçimde mutluluk düzeyi ve istihdam pozitif bir doğrusal ilişki içerisindedir.
+
+\newpage
+
+
+
+```{r fig.cap="Korelasyon Analizi" ,echo=FALSE}
+
+library(magrittr)
+library(dplyr)
+library(knitr)
+
+cor_table <- veri %>%
+  select(5, 43, 20) %>%
+  cor()
+
+kable(cor_table, caption = "Korelasyon Matrisi")
+```
+
+# Sonuç
+
+Çalışmamızda öngördüğümüz sonuçlara *İstihdam Oranı*, *Sağlığından Memnuniyet Oranı* ve *Üniversite Mezuniyet Oranı*'nın **Mutluluk** düzeyini etkilediği ve diğer bağımsız değişkenlerimizin regresyon analizine göre istatiksel olarak anlamsız olduğu sonucuna ulaştık. 
+Araştırma sorumuz olan Mutluluk Düzeyini etkileyen faktörlerin neler olduğuna verilen cevap istatiksel olarak yeterince güvenli olmamakla birlikte yeterlidir. Veri setinin güncellenmesi ve doğrusal regresyon analizinin iyileştirilmesi halinde daha güvenilir sonuçlar elde edilecektir. 
+
+\newpage
+
+# Kaynakça {#references}
+
+::: {#refs}
+:::
